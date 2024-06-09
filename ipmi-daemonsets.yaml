@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  annotations:
+    deprecated.daemonset.template.generation: "1"
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"apps/v1","kind":"DaemonSet","metadata":{"annotations":{"deprecated.daemonset.template.generation":"1"},"creationTimestamp":"2024-06-06T13:31:26Z","generation":1,"labels":{"app":"ipmi-exporter"},"name":"ipmi-exporter","namespace":"ipmi","resourceVersion":"4044650","uid":"d1e5478e-3c49-44f4-a5e1-808b1230b90f"},"spec":{"revisionHistoryLimit":10,"selector":{"matchLabels":{"app":"ipmi-exporter"}},"template":{"metadata":{"annotations":{"bingokube-nvs.bingosoft.net/networkInterfaces":"{\"networkInterface\":[{\"virtualNetworkId\":\"system-vn\"}]}"},"creationTimestamp":null,"labels":{"app":"ipmi-exporter"}},"spec":{"containers":[{"env":[{"name":"IPMI_EXPORTER_DISABLE_SUPERMICRO","value":"true"},{"name":"IPMI_EXPORTER_DISABLE_DELL","value":"true"},{"name":"IPMI_EXPORTER_DISABLE_HP","value":"true"}],"image":"registry.bingosoft.net/bingomatrix/prometheuscommunity/ipmi-exporter:v1.8.0","imagePullPolicy":"IfNotPresent","name":"ipmi-exporter","ports":[{"containerPort":9290,"protocol":"TCP"}],"resources":{},"securityContext":{"privileged":true,"runAsUser":0},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/dev/ipmi0","name":"ipmi-dev"}]}],"dnsPolicy":"ClusterFirst","initContainers":[{"command":["chmod","666","/dev/ipmi0"],"image":"registry.bingosoft.net/bingomatrix/optbox:v1.8.0","imagePullPolicy":"IfNotPresent","name":"init-chmod","resources":{},"securityContext":{"privileged":true},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","volumeMounts":[{"mountPath":"/dev/ipmi0","name":"ipmi-dev"}]}],"restartPolicy":"Always","schedulerName":"default-scheduler","securityContext":{},"terminationGracePeriodSeconds":30,"volumes":[{"hostPath":{"path":"/dev/ipmi0","type":""},"name":"ipmi-dev"}]}},"updateStrategy":{"rollingUpdate":{"maxSurge":0,"maxUnavailable":1},"type":"RollingUpdate"}},"status":{"currentNumberScheduled":2,"desiredNumberScheduled":2,"numberAvailable":2,"numberMisscheduled":0,"numberReady":2,"observedGeneration":1,"updatedNumberScheduled":2}}
+  generation: 1
+  labels:
+    app: ipmi-my-exporter
+  name: ipmi-my-exporter
+  namespace: ipmi-my
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: ipmi-my-exporter
+  template:
+    metadata:
+      annotations:
+        # add your own network inferface
+      creationTimestamp: null
+      labels:
+        app: ipmi-my-exporter
+    spec:
+      containers:
+        - env:
+            - name: IPMI_EXPORTER_DISABLE_SUPERMICRO
+              value: "true"
+            - name: IPMI_EXPORTER_DISABLE_DELL
+              value: "true"
+            - name: IPMI_EXPORTER_DISABLE_HP
+              value: "true"
+          image: ipmi-my-exporter:v1.8.0
+          imagePullPolicy: IfNotPresent
+          name: ipmi-my-exporter
+          ports:
+            - containerPort: 9290
+              protocol: TCP
+          resources: {}
+          securityContext:
+            privileged: true
+            runAsUser: 0
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /dev/ipmi0
+              name: ipmi-my-dev
+      dnsPolicy: ClusterFirst
+      initContainers:
+        - command:
+            - chmod
+            - "666"
+            - /dev/ipmi0
+          image: optbox:v1.8.0
+          imagePullPolicy: IfNotPresent
+          name: init-chmod
+          resources: {}
+          securityContext:
+            privileged: true
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          volumeMounts:
+            - mountPath: /dev/ipmi0
+              name: ipmi-my-dev
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - hostPath:
+            path: /dev/ipmi0
+            type: ""
+          name: ipmi-my-dev
+  updateStrategy:
+    rollingUpdate:
+      maxSurge: 0
+      maxUnavailable: 1
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 2
+  desiredNumberScheduled: 2
+  numberAvailable: 2
+  numberMisscheduled: 0
+  numberReady: 2
+  observedGeneration: 1
+  updatedNumberScheduled: 2
